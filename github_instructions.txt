@@ -1,0 +1,55 @@
+# GitHub 同步指南
+
+## 已完成步骤
+1. 初始化Git仓库（已完成）
+
+## 后续步骤
+
+### 1. 添加文件到暂存区
+```
+git add .
+```
+或添加特定文件：
+```
+git add README.md games/ zhihu-sync-extension/
+```
+
+### 2. 提交更改
+```
+git commit -m "初始提交：添加游戏项目和知乎同步扩展"
+```
+
+### 3. 在GitHub上创建新仓库
+- 访问 https://github.com/new
+- 输入仓库名称（例如：personal-projects）
+- 添加描述："个人代码项目集合"
+- 选择公开或私有
+- 不要初始化README、.gitignore或许可证
+- 点击"创建仓库"
+
+### 4. 关联远程仓库
+```
+git remote add origin https://github.com/你的用户名/personal-projects.git
+```
+
+### 5. 推送到GitHub
+```
+git push -u origin main
+```
+如果默认分支是master：
+```
+git push -u origin master
+```
+
+### 6. 后续更新
+修改文件后：
+```
+git add .
+git commit -m "更新说明"
+git push
+```
+
+## 注意事项
+- 首次推送可能需要登录GitHub账号
+- 如果使用SSH密钥，确保已配置SSH密钥
+- 可以使用GitHub Desktop客户端简化操作

@@ -4,10 +4,16 @@
 
 ## 项目列表
 
-- **cat_image.py**: 图像处理脚本
-- **gomoku.py**: 五子棋游戏
-- **mario.py**: 马里奥游戏实现
-- **puzzle-game.py**: 拼图游戏
+### 游戏项目
+
+- **games/mario/mario.py**: 马里奥游戏实现
+- **games/puzzle-game/**: 拼图游戏
+  - puzzle-game.py: 主游戏文件
+  - cat_image.py: 图片资源文件
+- **games/gomoku/gomoku.py**: 五子棋游戏
+
+### 浏览器扩展
+
 - **zhihu-sync-extension**: 知乎文章同步Chrome扩展
 
 ## 知乎文章同步扩展
