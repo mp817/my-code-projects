@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "知乎文章同步助手",
+  "version": "1.0",
+  "description": "一键将知乎文章同步到CSDN、博客园、头条、掘金等平台",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "*://zhuanlan.zhihu.com/*",
+    "*://www.zhihu.com/*",
+    "*://blog.csdn.net/*",
+    "*://www.cnblogs.com/*",
+    "*://juejin.cn/*",
+    "*://mp.toutiao.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/icon16.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "images/icon16.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://zhuanlan.zhihu.com/*", "*://www.zhihu.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "options_page": "options.html"
+}

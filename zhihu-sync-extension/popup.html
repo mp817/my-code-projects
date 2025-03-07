@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>知乎文章同步助手</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', sans-serif;
+      width: 320px;
+      padding: 15px;
+      background-color: #f9f9f9;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #0084ff;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    .platform-list {
+      margin-bottom: 15px;
+    }
+    .platform {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .platform-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+    }
+    .platform-name {
+      flex-grow: 1;
+    }
+    .btn {
+      background-color: #0084ff;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    .btn:hover {
+      background-color: #0077e6;
+    }
+    .btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .status {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 13px;
+      display: none;
+    }
+    .success {
+      background-color: #e6f7e6;
+      color: #28a745;
+      display: block;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #dc3545;
+      display: block;
+    }
+    .settings-link {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      color: #0084ff;
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .login-reminder {
+      color: #dc3545;
+      font-size: 12px;
+      margin-left: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>知乎文章同步助手</h2>
+  </div>
+  
+  <div id="not-zhihu" style="display: none;">
+    <p>请在知乎文章页面使用此扩展</p>
+  </div>
+  
+  <div id="zhihu-content">
+    <div id="article-info">
+      <p><strong>当前文章：</strong><span id="article-title">加载中...</span></p>
+    </div>
+    
+    <div class="platform-list">
+      <h3>选择同步平台：</h3>
+      
+      <div class="platform">
+        <input type="checkbox" id="csdn" class="platform-checkbox">
+        <label for="csdn" class="platform-name">CSDN</label>
+        <span id="csdn-status" class="login-reminder">(未登录)</span>
+      </div>
+      
+      <div class="platform">
+        <input type="checkbox" id="cnblogs" class="platform-checkbox">
+        <label for="cnblogs" class="platform-name">博客园</label>
+        <span id="cnblogs-status" class="login-reminder">(未登录)</span>
+      </div>
+      
+      <div class="platform">
+        <input type="checkbox" id="juejin" class="platform-checkbox">
+        <label for="juejin" class="platform-name">掘金</label>
+        <span id="juejin-status" class="login-reminder">(未登录)</span>
+      </div>
+      
+      <div class="platform">
+        <input type="checkbox" id="toutiao" class="platform-checkbox">
+        <label for="toutiao" class="platform-name">头条</label>
+        <span id="toutiao-status" class="login-reminder">(未登录)</span>
+      </div>
+    </div>
+    
+    <button id="sync-button" class="btn">开始同步</button>
+    
+    <div id="status-message" class="status"></div>
+    
+    <a href="#" id="settings-link" class="settings-link">账号设置</a>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

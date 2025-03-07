@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>知乎文章同步助手 - 账号设置</title>
+  <style>
+    body {
+      font-family: 'Microsoft YaHei', sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #0084ff;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 15px;
+    }
+    .platform-section {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .platform-title {
+      color: #333;
+      margin-bottom: 15px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #666;
+    }
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .save-btn {
+      background-color: #0084ff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .save-btn:hover {
+      background-color: #0077e6;
+    }
+    .status {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 4px;
+      display: none;
+    }
+    .success {
+      background-color: #e6f7e6;
+      color: #28a745;
+      display: block;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #dc3545;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>账号设置</h1>
+    <p>配置各平台的登录信息</p>
+  </div>
+
+  <div class="platform-section">
+    <h2 class="platform-title">CSDN</h2>
+    <div class="form-group">
+      <label for="csdn-username">用户名</label>
+      <input type="text" id="csdn-username" placeholder="CSDN用户名">
+    </div>
+    <div class="form-group">
+      <label for="csdn-password">密码</label>
+      <input type="password" id="csdn-password" placeholder="CSDN账号密码">
+    </div>
+  </div>
+
+  <div class="platform-section">
+    <h2 class="platform-title">博客园</h2>
+    <div class="form-group">
+      <label for="cnblogs-username">用户名</label>
+      <input type="text" id="cnblogs-username" placeholder="博客园用户名">
+    </div>
+    <div class="form-group">
+      <label for="cnblogs-password">密码</label>
+      <input type="password" id="cnblogs-password" placeholder="博客园账号密码">
+    </div>
+  </div>
+
+  <div class="platform-section">
+    <h2 class="platform-title">掘金</h2>
+    <div class="form-group">
+      <label for="juejin-username">用户名</label>
+      <input type="text" id="juejin-username" placeholder="掘金用户名">
+    </div>
+    <div class="form-group">
+      <label for="juejin-password">密码</label>
+      <input type="password" id="juejin-password" placeholder="掘金账号密码">
+    </div>
+  </div>
+
+  <div class="platform-section">
+    <h2 class="platform-title">头条</h2>
+    <div class="form-group">
+      <label for="toutiao-username">用户名</label>
+      <input type="text" id="toutiao-username" placeholder="头条用户名">
+    </div>
+    <div class="form-group">
+      <label for="toutiao-password">密码</label>
+      <input type="password" id="toutiao-password" placeholder="头条账号密码">
+    </div>
+  </div>
+
+  <button id="save-btn" class="save-btn">保存设置</button>
+  <div id="status-message" class="status"></div>
+
+  <script src="options.js"></script>
+</body>
+</html>
