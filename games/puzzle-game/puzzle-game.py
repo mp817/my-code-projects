@@ -75,22 +75,19 @@ def create_default_image():
     return pygame.transform.scale(surface, (PIECE_SIZE * GRID_SIZE, PIECE_SIZE * GRID_SIZE))
 
 # 在pygame.init()后添加
-from cat_image import cat_image_base64
+from cat_image import get_cat_image
 import base64
 import io
 
 # 加载猫咪图片
 def load_cat_image():
     try:
-        # 解码base64图片数据
-        image_data = base64.b64decode(cat_image_base64)
-        # 使用PIL打开图片
-        pil_image = Image.open(io.BytesIO(image_data))
+        # 使用新的get_cat_image函数获取图片
+        pygame_image = get_cat_image()
+        if pygame_image is None:
+            return create_default_image()
         # 调整大小
-        pil_image = pil_image.resize((PIECE_SIZE * GRID_SIZE, PIECE_SIZE * GRID_SIZE))
-        # 转换为Pygame surface
-        image_str = pil_image.tobytes()
-        pygame_image = pygame.image.fromstring(image_str, pil_image.size, 'RGB')
+        pygame_image = pygame.transform.scale(pygame_image, (PIECE_SIZE * GRID_SIZE, PIECE_SIZE * GRID_SIZE))
         return pygame_image
     except Exception as e:
         print(f"加载猫咪图片失败: {str(e)}")
