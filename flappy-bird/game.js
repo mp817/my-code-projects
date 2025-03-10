@@ -169,8 +169,16 @@ const pipes = {
     },
     width: 52,
     gap: 100,
-    maxYPos: -120,
+    initialGap: 100,  // 初始间隙值
+    minGap: 70,       // 最小间隙值
+    maxYPos: -40,     // 修改为更低的位置（从-80改为-40）
+    initialMaxYPos: -40, // 修改为更低的初始位置（从-80改为-40）
+    minMaxYPos: -100,     // 最小的最大Y位置（从-150改为-100，减少极端位置）
     dx: 2,
+    initialSpawnInterval: 150, // 初始生成间隔（帧数）
+    minSpawnInterval: 90,      // 最小生成间隔（帧数）
+    spawnInterval: 150,        // 当前生成间隔
+    difficultyIncreaseRate: 0.0005, // 难度增加速率
     
     draw: function() {
         for(let i = 0; i < this.position.length; i++) {
@@ -185,7 +193,7 @@ const pipes = {
             ctx.fillRect(p.x - 2, p.y + p.height - 10, this.width + 4, 10);
             
             // 下管道
-            let bottomPipeY = p.y + p.height + this.gap;
+            let bottomPipeY = p.y + p.height + p.gap; // 使用管道特定的间隙
             ctx.fillStyle = '#33a653';
             ctx.fillRect(p.x, bottomPipeY, this.width, canvas.height - bottomPipeY);
             
@@ -198,12 +206,25 @@ const pipes = {
     update: function() {
         if(gameState.current !== 'playing') return;
         
-        // 每150帧添加一对新管道
-        if(frames % 150 === 0) {
+        // 根据游戏进行时间增加难度
+        let difficulty = Math.min(1, frames * this.difficultyIncreaseRate);
+        
+        // 动态调整间隙大小（随时间减小）
+        this.gap = this.initialGap - (this.initialGap - this.minGap) * difficulty;
+        
+        // 动态调整管道生成位置（使位置更极端）
+        this.maxYPos = this.initialMaxYPos - (this.initialMaxYPos - this.minMaxYPos) * difficulty;
+        
+        // 动态调整生成频率（随时间增加）
+        this.spawnInterval = this.initialSpawnInterval - (this.initialSpawnInterval - this.minSpawnInterval) * difficulty;
+        
+        // 每X帧添加一对新管道，X随时间减小
+        if(frames % Math.floor(this.spawnInterval) === 0) {
             this.position.push({
                 x: canvas.width,
-                y: this.maxYPos * (Math.random() + 1),
-                height: this.top.height
+                y: this.maxYPos * (Math.random() + 0.6), // 修改随机因子，使水管高度更合理
+                height: this.top.height,
+                gap: this.gap // 为每个管道存储当前的间隙值
             });
         }
         
@@ -234,7 +255,7 @@ const pipes = {
             }
             
             // 下管道碰撞
-            let bottomPipeY = p.y + p.height + this.gap;
+            let bottomPipeY = p.y + p.height + p.gap; // 使用管道特定的间隙
             if(
                 bird.x + bird.radius > p.x && 
                 bird.x - bird.radius < p.x + this.width && 
@@ -249,6 +270,9 @@ const pipes = {
     
     reset: function() {
         this.position = [];
+        this.gap = this.initialGap;
+        this.maxYPos = this.initialMaxYPos;
+        this.spawnInterval = this.initialSpawnInterval;
     }
 };
 
