@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>已提交工具 - AIGC导航</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&display=swap">
+    <style>
+        /* 提交列表特定样式 */
+        .submissions-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .submission-card {
+            border: 1px solid #e6e6e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .submission-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .submission-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .submission-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            margin-right: 15px;
+            background-color: #f5f5f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .submission-logo img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .submission-title {
+            flex: 1;
+        }
+
+        .submission-title h3 {
+            margin: 0 0 5px 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .submission-category {
+            font-size: 14px;
+            color: #666;
+            background-color: #f5f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .submission-brief {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .submission-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .submission-link {
+            display: inline-block;
+            background: linear-gradient(90deg, #007aff, #5856d6);
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .submission-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 122, 255, 0.2);
+        }
+
+        .submission-date {
+            font-size: 12px;
+            color: #999;
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .no-submissions {
+            text-align: center;
+            padding: 40px 0;
+            color: #666;
+        }
+
+        .filter-container {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            margin-right: 10px;
+        }
+
+        .filter-button {
+            background-color: #f5f5f7;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .filter-button:hover {
+            background-color: #e6e6e6;
+        }
+
+        .filter-button.active {
+            background-color: #007aff;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>栏目分类</h2>
+        </div>
+        <div class="sidebar-content">
+            <ul class="sidebar-menu">
+                <li><a href="index.html#recommendation">导航推荐</a></li>
+                <li><a href="index.html#ai-writing">AI写作平台</a></li>
+                <li><a href="index.html#ai-drawing">AI绘画生成</a></li>
+                <li><a href="index.html#ai-video">AI视频创作</a></li>
+                <li><a href="index.html#ai-chat">AI智能对话</a></li>
+                <li><a href="index.html#aigc-design">AIGC创意设计</a></li>
+                <li><a href="index.html#aigc-audio">AIGC音频处理</a></li>
+                <li><a href="index.html#aigc-office">AIGC办公效率</a></li>
+                <li><a href="index.html#ai-learning">AI学习资源</a></li>
+                <li><a href="index.html#ai-agent">AI智能体</a></li>
+                <li><a href="index.html#ai-model">AI大模型平台</a></li>
+                <li><a href="index.html#aigc-dev">AIGC开发平台</a></li>
+                <li><a href="index.html#aigc-infra">AIGC基础设施</a></li>
+                <li><a href="index.html#aigc-life">AIGC生命科学</a></li>
+                <li><a href="index.html#aigc-enterprise">AIGC企业场景</a></li>
+                <li><a href="index.html#ai-coding">AI编程工具</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <h1 class="logo">AIGC导航</h1>
+            </div>
+            <div class="nav-container">
+                <nav>
+                    <ul>
+                        <li><a href="index.html">首页</a></li>
+                        <li><a href="#">资讯</a></li>
+                        <li><a href="#">资源</a></li>
+                        <li><a href="#">免费AI</a></li>
+                        <li><a href="#">DeepSeek套件</a></li>
+                        <li><a href="#">AI绘画</a></li>
+                        <li><a href="#">创作辅助</a></li>
+                        <li><a href="submit.html">工具提交</a></li>
+                        <li><a href="submissions.html" class="active">已提交工具</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <section class="content-section">
+                <h2>已提交工具列表</h2>
+                <p class="section-description">以下是用户提交的AIGC工具，这些工具正在审核中或已通过审核。</p>
+                
+                <div class="submissions-container">
+                    <div class="filter-container">
+                        <span class="filter-label">筛选类别：</span>
+                        <button class="filter-button active" data-category="all">全部</button>
+                        <button class="filter-button" data-category="ai-writing">AI写作</button>
+                        <button class="filter-button" data-category="ai-drawing">AI绘画</button>
+                        <button class="filter-button" data-category="ai-video">AI视频</button>
+                        <button class="filter-button" data-category="ai-chat">AI对话</button>
+                        <button class="filter-button" data-category="other">其他</button>
+                    </div>
+                    
+                    <div id="submissionsList">
+                        <!-- 提交列表将通过JavaScript动态生成 -->
+                        <div class="no-submissions" id="noSubmissions">
+                            暂无提交的工具，请先提交工具。
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>© 2023 AIGC导航 | 汇集优质AI工具与资源的导航平台</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="submissions.js"></script>
+</body>
+</html>

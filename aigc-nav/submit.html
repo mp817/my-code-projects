@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIGC工具提交 - AIGC导航</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&display=swap">
+    <style>
+        /* 提交表单特定样式 */
+        .submit-form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e6e6e6;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #007aff;
+            outline: none;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group .hint {
+            font-size: 12px;
+            color: #86868b;
+            margin-top: 5px;
+        }
+
+        .submit-button {
+            background: linear-gradient(90deg, #007aff, #5856d6);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .file-upload input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            cursor: inherit;
+            display: block;
+        }
+
+        .file-upload-btn {
+            display: inline-block;
+            background-color: #f5f5f7;
+            color: #333;
+            border: 1px solid #e6e6e6;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-btn:hover {
+            background-color: #e6e6e6;
+        }
+
+        .file-name {
+            margin-left: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .success-message,
+        .error-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>栏目分类</h2>
+        </div>
+        <div class="sidebar-content">
+            <ul class="sidebar-menu">
+                <li><a href="index.html#recommendation">导航推荐</a></li>
+                <li><a href="index.html#ai-writing">AI写作平台</a></li>
+                <li><a href="index.html#ai-drawing">AI绘画生成</a></li>
+                <li><a href="index.html#ai-video">AI视频创作</a></li>
+                <li><a href="index.html#ai-chat">AI智能对话</a></li>
+                <li><a href="index.html#aigc-design">AIGC创意设计</a></li>
+                <li><a href="index.html#aigc-audio">AIGC音频处理</a></li>
+                <li><a href="index.html#aigc-office">AIGC办公效率</a></li>
+                <li><a href="index.html#ai-learning">AI学习资源</a></li>
+                <li><a href="index.html#ai-agent">AI智能体</a></li>
+                <li><a href="index.html#ai-model">AI大模型平台</a></li>
+                <li><a href="index.html#aigc-dev">AIGC开发平台</a></li>
+                <li><a href="index.html#aigc-infra">AIGC基础设施</a></li>
+                <li><a href="index.html#aigc-life">AIGC生命科学</a></li>
+                <li><a href="index.html#aigc-enterprise">AIGC企业场景</a></li>
+                <li><a href="index.html#ai-coding">AI编程工具</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <h1 class="logo">AIGC导航</h1>
+            </div>
+            <div class="nav-container">
+                <nav>
+                    <ul>
+                        <li><a href="index.html">首页</a></li>
+                        <li><a href="#">资讯</a></li>
+                        <li><a href="#">资源</a></li>
+                        <li><a href="#">免费AI</a></li>
+                        <li><a href="#">DeepSeek套件</a></li>
+                        <li><a href="#">AI绘画</a></li>
+                        <li><a href="#">创作辅助</a></li>
+                        <li><a href="submit.html" class="active">工具提交</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <section class="content-section">
+                <h2>AIGC工具提交</h2>
+                <p class="section-description">欢迎提交您的AIGC工具，我们将在审核后将其添加到导航平台中。</p>
+                
+                <div class="submit-form-container">
+                    <div class="success-message" id="successMessage">
+                        提交成功！感谢您的贡献，我们将尽快审核您提交的AIGC工具。
+                    </div>
+                    <div class="error-message" id="errorMessage">
+                        提交失败，请检查您填写的信息并重试。
+                    </div>
+                    
+                    <form id="toolSubmitForm">
+                        <div class="form-group">
+                            <label for="toolName">应用名称 *</label>
+                            <input type="text" id="toolName" name="toolName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="toolLink">工具链接 *</label>
+                            <input type="url" id="toolLink" name="toolLink" required>
+                            <div class="hint">请输入完整URL，包含http://或https://</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="toolCategory">工具类别 *</label>
+                            <select id="toolCategory" name="toolCategory" required>
+                                <option value="">请选择类别</option>
+                                <option value="ai-writing">AI写作平台</option>
+                                <option value="ai-drawing">AI绘画生成</option>
+                                <option value="ai-video">AI视频创作</option>
+                                <option value="ai-chat">AI智能对话</option>
+                                <option value="aigc-design">AIGC创意设计</option>
+                                <option value="aigc-audio">AIGC音频处理</option>
+                                <option value="aigc-office">AIGC办公效率</option>
+                                <option value="ai-learning">AI学习资源</option>
+                                <option value="ai-agent">AI智能体</option>
+                                <option value="ai-model">AI大模型平台</option>
+                                <option value="aigc-dev">AIGC开发平台</option>
+                                <option value="aigc-infra">AIGC基础设施</option>
+                                <option value="aigc-life">AIGC生命科学</option>
+                                <option value="aigc-enterprise">AIGC企业场景</option>
+                                <option value="ai-coding">AI编程工具</option>
+                                <option value="other">其他</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="toolBrief">应用简介 *</label>
+                            <input type="text" id="toolBrief" name="toolBrief" maxlength="50" required>
+                            <div class="hint">简短描述，不超过50个字符</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="toolDescription">应用详情 *</label>
+                            <textarea id="toolDescription" name="toolDescription" required></textarea>
+                            <div class="hint">详细描述工具的功能、特点和使用场景</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="toolLogo">应用Logo *</label>
+                            <div class="file-upload">
+                                <span class="file-upload-btn">选择文件</span>
+                                <input type="file" id="toolLogo" name="toolLogo" accept="image/*" required>
+                            </div>
+                            <span class="file-name" id="logoFileName">未选择文件</span>
+                            <div class="hint">推荐尺寸：200x200像素，支持PNG、JPG格式</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contactInfo">联系方式 *</label>
+                            <input type="text" id="contactInfo" name="contactInfo" required>
+                            <div class="hint">邮箱或手机号码，方便我们联系您</div>
+                        </div>
+                        
+                        <button type="submit" class="submit-button">提交工具</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>© 2023 AIGC导航 | 汇集优质AI工具与资源的导航平台</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="submit.js"></script>
+</body>
+</html>
