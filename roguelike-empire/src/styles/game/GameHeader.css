@@ -1,0 +1,111 @@
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2c3e50;
+  color: white;
+  padding: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-left, .header-center, .header-right {
+  display: flex;
+  align-items: center;
+}
+
+.faction-info {
+  display: flex;
+  align-items: center;
+}
+
+.faction-icon {
+  font-size: 2rem;
+  margin-right: 1rem;
+}
+
+.faction-details h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.faction-details p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.turn-info {
+  text-align: center;
+}
+
+.turn-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.turn-date {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.action-points {
+  display: flex;
+  align-items: center;
+  margin-right: 1.5rem;
+}
+
+.ap-label {
+  margin-right: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.ap-dots {
+  display: flex;
+}
+
+.ap-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin: 0 3px;
+}
+
+.ap-dot.active {
+  background-color: #2ecc71;
+}
+
+.ap-dot.inactive {
+  background-color: #7f8c8d;
+}
+
+.end-turn-btn {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.end-turn-btn:hover:not(:disabled) {
+  background-color: #c0392b;
+}
+
+.end-turn-btn:disabled {
+  background-color: #7f8c8d;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .game-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .header-left, .header-center, .header-right {
+    width: 100%;
+    justify-content: center;
+  }
+}

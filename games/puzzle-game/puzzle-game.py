@@ -104,15 +104,17 @@ class PuzzlePiece:
         self.image = pygame.Surface((PIECE_SIZE + PUZZLE_EDGE_SIZE * 2, PIECE_SIZE + PUZZLE_EDGE_SIZE * 2), pygame.SRCALPHA)
         self.image.fill((0, 0, 0, 0))  # 透明背景
         
-        # 绘制拼图边缘
-        edge_color = (100, 100, 100)
-        pygame.draw.rect(self.image, edge_color, (PUZZLE_EDGE_SIZE, PUZZLE_EDGE_SIZE, PIECE_SIZE, PIECE_SIZE))
+        # 使用浅灰色作为拼图底色
+        bg_color = (245, 245, 245)  # 更浅的灰色
+        edge_color = (200, 200, 200)  # 更浅的灰色边缘
+        pygame.draw.rect(self.image, bg_color, (PUZZLE_EDGE_SIZE, PUZZLE_EDGE_SIZE, PIECE_SIZE, PIECE_SIZE))
         
-        # 添加凸起和凹陷
-        pygame.draw.circle(self.image, edge_color, (PUZZLE_EDGE_SIZE + PIECE_SIZE//2, PUZZLE_EDGE_SIZE//2), PUZZLE_EDGE_SIZE//2)  # 上凸
-        pygame.draw.circle(self.image, edge_color, (PUZZLE_EDGE_SIZE + PIECE_SIZE//2, PUZZLE_EDGE_SIZE * 3//2 + PIECE_SIZE), PUZZLE_EDGE_SIZE//2)  # 下凹
-        pygame.draw.circle(self.image, edge_color, (PUZZLE_EDGE_SIZE//2, PUZZLE_EDGE_SIZE + PIECE_SIZE//2), PUZZLE_EDGE_SIZE//2)  # 左凸
-        pygame.draw.circle(self.image, edge_color, (PUZZLE_EDGE_SIZE * 3//2 + PIECE_SIZE, PUZZLE_EDGE_SIZE + PIECE_SIZE//2), PUZZLE_EDGE_SIZE//2)  # 右凹
+        # 添加更小的凸起和凹陷
+        circle_size = PUZZLE_EDGE_SIZE // 10  # 大幅减小圆点大小
+        pygame.draw.circle(self.image, edge_color, (PUZZLE_EDGE_SIZE + PIECE_SIZE//2, PUZZLE_EDGE_SIZE//2), circle_size)  # 上凸
+        pygame.draw.circle(self.image, edge_color, (PUZZLE_EDGE_SIZE + PIECE_SIZE//2, PUZZLE_EDGE_SIZE * 3//2 + PIECE_SIZE), circle_size)  # 下凹
+        pygame.draw.circle(self.image, edge_color, (PUZZLE_EDGE_SIZE//2, PUZZLE_EDGE_SIZE + PIECE_SIZE//2), circle_size)  # 左凸
+        pygame.draw.circle(self.image, edge_color, (PUZZLE_EDGE_SIZE * 3//2 + PIECE_SIZE, PUZZLE_EDGE_SIZE + PIECE_SIZE//2), circle_size)  # 右凹
         
         # 将原始图片绘制到中心位置
         self.image.blit(image, (PUZZLE_EDGE_SIZE, PUZZLE_EDGE_SIZE))
@@ -124,15 +126,33 @@ class PuzzlePiece:
         self.correct_y = correct_y - PUZZLE_EDGE_SIZE
         self.angle = 0
         self.dragging = False
+        self.connected = False  # 标记是否已与其他拼图块正确连接
+        self.connected_pieces = []  # 存储已连接的拼图块
 
     def rotate(self):
-        self.angle = (self.angle + 90) % 360
-        self.image = pygame.transform.rotate(self.image, 90)
+        if not self.connected:  # 如果已连接，则不允许旋转
+            self.angle = (self.angle + 90) % 360
+            self.image = pygame.transform.rotate(self.image, 90)
 
     def is_in_correct_position(self):
         return (abs(self.rect.x - self.correct_x) < 10 and 
                 abs(self.rect.y - self.correct_y) < 10 and 
                 self.angle % 360 == 0)
+
+    def connect_with(self, other_piece):
+        if not self.connected:
+            self.connected = True
+            self.connected_pieces.append(other_piece)
+            # 将拼图块变为绿色以标识正确连接
+            surface = self.image.copy()
+            overlay = pygame.Surface(surface.get_size(), pygame.SRCALPHA)
+            overlay.fill((0, 255, 0, 64))  # 半透明的绿色
+            surface.blit(overlay, (0, 0))
+            self.image = surface
+            # 同步移动所有连接的拼图块
+            for piece in self.connected_pieces:
+                piece.rect.x = self.rect.x + (piece.correct_x - self.correct_x)
+                piece.rect.y = self.rect.y + (piece.correct_y - self.correct_y)
 
 class PuzzleGame:
     def __init__(self):
@@ -310,6 +330,43 @@ class PuzzleGame:
             # 不需要销毁tkinter窗口，因为我们使用的是pygame的输入方式
             pass
 
+    def check_adjacent_pieces(self):
+        # 检查所有拼图块的相邻位置
+        for piece in self.pieces:
+            if piece.is_in_correct_position() and not piece.connected:
+                # 获取当前拼图块的网格位置
+                grid_x = (piece.correct_x + PUZZLE_EDGE_SIZE - MARGIN) // PIECE_SIZE
+                grid_y = (piece.correct_y + PUZZLE_EDGE_SIZE - MARGIN) // PIECE_SIZE
+                
+                # 检查四个方向的相邻拼图块
+                for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
+                    adj_x = grid_x + dx
+                    adj_y = grid_y + dy
+                    
+                    if 0 <= adj_x < GRID_SIZE and 0 <= adj_y < GRID_SIZE:
+                        # 查找相邻位置的拼图块
+                        for other_piece in self.pieces:
+                            if other_piece.is_in_correct_position() and not other_piece.connected:
+                                other_grid_x = (other_piece.correct_x + PUZZLE_EDGE_SIZE - MARGIN) // PIECE_SIZE
+                                other_grid_y = (other_piece.correct_y + PUZZLE_EDGE_SIZE - MARGIN) // PIECE_SIZE
+                                
+                                if other_grid_x == adj_x and other_grid_y == adj_y:
+                                    # 两个拼图块都在正确位置且相邻，连接它们
+                                    piece.connect_with(other_piece)
+                                    other_piece.connect_with(piece)
+                                    
+                                    # 传递连接状态 - 将other_piece的连接块也添加到piece的连接列表中
+                                    for connected_piece in other_piece.connected_pieces:
+                                        if connected_piece != piece and connected_piece not in piece.connected_pieces:
+                                            piece.connected_pieces.append(connected_piece)
+                                            connected_piece.connected_pieces.append(piece)
+                                    
+                                    # 将piece的连接块也添加到other_piece的连接列表中
+                                    for connected_piece in piece.connected_pieces:
+                                        if connected_piece != other_piece and connected_piece not in other_piece.connected_pieces:
+                                            other_piece.connected_pieces.append(connected_piece)
+                                            connected_piece.connected_pieces.append(other_piece)
+
     def create_pieces(self, image):
         if image is None:
             print("没有加载到有效的图片")
@@ -427,8 +484,20 @@ class PuzzleGame:
                     
                     elif event.type == pygame.MOUSEMOTION:
                         if self.selected_piece and self.selected_piece.dragging:
+                            # 保存旧位置
+                            old_x = self.selected_piece.rect.x
+                            old_y = self.selected_piece.rect.y
+                            # 更新选中拼图块的位置
                             self.selected_piece.rect.x = event.pos[0] - PIECE_SIZE // 2
                             self.selected_piece.rect.y = event.pos[1] - PIECE_SIZE // 2
+                            # 计算位移
+                            dx = self.selected_piece.rect.x - old_x
+                            dy = self.selected_piece.rect.y - old_y
+                            # 同步移动所有连接的拼图块
+                            if self.selected_piece.connected:
+                                for piece in self.selected_piece.connected_pieces:
+                                    piece.rect.x += dx
+                                    piece.rect.y += dy
             
             return True
         except Exception as e:

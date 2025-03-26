@@ -107,12 +107,13 @@ class PuzzlePiece:
         self.image = pygame.Surface((PIECE_SIZE + PUZZLE_EDGE_SIZE * 2, PIECE_SIZE + PUZZLE_EDGE_SIZE * 2), pygame.SRCALPHA)
         self.image.fill((0, 0, 0, 0))  # 透明背景
         
-        # 绘制拼图边缘
-        edge_color = (100, 100, 100)
-        pygame.draw.rect(self.image, edge_color, (PUZZLE_EDGE_SIZE, PUZZLE_EDGE_SIZE, PIECE_SIZE, PIECE_SIZE))
+        # 使用浅灰色作为拼图底色
+        bg_color = (245, 245, 245)  # 更浅的灰色
+        edge_color = (200, 200, 200)  # 更浅的灰色边缘
+        pygame.draw.rect(self.image, bg_color, (PUZZLE_EDGE_SIZE, PUZZLE_EDGE_SIZE, PIECE_SIZE, PIECE_SIZE))
         
-        # 添加凸起和凹陷，使用更小的圆点
-        circle_size = PUZZLE_EDGE_SIZE // 3
+        # 添加更小的凸起和凹陷
+        circle_size = PUZZLE_EDGE_SIZE // 10  # 大幅减小圆点大小
         pygame.draw.circle(self.image, edge_color, (PUZZLE_EDGE_SIZE + PIECE_SIZE//2, PUZZLE_EDGE_SIZE//2), circle_size)  # 上凸
         pygame.draw.circle(self.image, edge_color, (PUZZLE_EDGE_SIZE + PIECE_SIZE//2, PUZZLE_EDGE_SIZE * 3//2 + PIECE_SIZE), circle_size)  # 下凹
         pygame.draw.circle(self.image, edge_color, (PUZZLE_EDGE_SIZE//2, PUZZLE_EDGE_SIZE + PIECE_SIZE//2), circle_size)  # 左凸
@@ -128,8 +129,8 @@ class PuzzlePiece:
         self.correct_y = correct_y - PUZZLE_EDGE_SIZE
         self.angle = 0
         self.dragging = False
-        self.connected = False  # 新增：标记是否已与其他拼图块正确连接
-        self.connected_pieces = []  # 新增：存储已连接的拼图块
+        self.connected = False  # 标记是否已与其他拼图块正确连接
+        self.connected_pieces = []  # 存储已连接的拼图块
 
     def rotate(self):
         if not self.connected:  # 如果已连接，则不允许旋转
@@ -151,6 +152,10 @@ class PuzzlePiece:
             overlay.fill((0, 255, 0, 64))  # 半透明的绿色
             surface.blit(overlay, (0, 0))
             self.image = surface
+            # 同步移动所有连接的拼图块
+            for piece in self.connected_pieces:
+                piece.rect.x = self.rect.x + (piece.correct_x - self.correct_x)
+                piece.rect.y = self.rect.y + (piece.correct_y - self.correct_y)
 
 class PuzzleGame:
     def __init__(self):
@@ -188,271 +193,22 @@ class PuzzleGame:
                                 other_grid_y = (other_piece.correct_y + PUZZLE_EDGE_SIZE - MARGIN) // PIECE_SIZE
                                 
                                 if other_grid_x == adj_x and other_grid_y == adj_y:
-                                    # 两个拼图块都在正确位置且相邻，连接它们
+                                    # 连接两个拼图块
                                     piece.connect_with(other_piece)
                                     other_piece.connect_with(piece)
-
-    def handle_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return False
-            
-            # 处理鼠标事件
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:  # 左键点击
-                    mouse_pos = pygame.mouse.get_pos()
-                    
-                    # 检查是否点击了退出按钮
-                    if self.exit_button.collidepoint(mouse_pos):
-                        return False
-                    
-                    # 检查是否点击了提交按钮
-                    if self.submit_button.collidepoint(mouse_pos):
-                        self.show_result = True
-                        self.result_time = pygame.time.get_ticks()
-                        continue
-                    
-                    # 选择拼图块
-                    for piece in reversed(self.pieces):
-                        if piece.rect.collidepoint(mouse_pos):
-                            if not piece.connected:  # 只能选择未连接的拼图块
-                                self.selected_piece = piece
-                                piece.dragging = True
-                                # 将选中的拼图块移到最上层
-                                self.pieces.remove(piece)
-                                self.pieces.append(piece)
-                            break
-                elif event.button == 3 and self.selected_piece:  # 右键点击
-                    if not self.selected_piece.connected:  # 只能旋转未连接的拼图块
-                        self.selected_piece.rotate()
-            
-            elif event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1 and self.selected_piece:
-                    self.selected_piece.dragging = False
-                    self.selected_piece = None
-                    # 检查相邻拼图块
-                    self.check_adjacent_pieces()
-            
-            elif event.type == pygame.MOUSEMOTION:
-                # 更新按钮悬停状态
-                mouse_pos = pygame.mouse.get_pos()
-                self.button_hover = self.submit_button.collidepoint(mouse_pos)
-                self.exit_button_hover = self.exit_button.collidepoint(mouse_pos)
-                
-                # 拖动拼图块
-                if self.selected_piece and self.selected_piece.dragging:
-                    self.selected_piece.rect.x = mouse_pos[0] - PIECE_SIZE//2
-                    self.selected_piece.rect.y = mouse_pos[1] - PIECE_SIZE//2
-        
-        return True
-
-    def load_image(self):
-        try:
-            # 使用pygame内部的文本输入方式替代终端输入
-            import os
-            
-            # 默认图片目录
-            default_dir = os.path.expanduser("~")
-            
-            # 保存当前屏幕状态
-            old_screen = screen.copy()
-            
-            # 显示文件选择提示
-            screen.fill(WHITE)
-            text = DEFAULT_FONT.render("请输入图片路径", True, BLACK)
-            text_rect = text.get_rect(center=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2 - 100))
-            screen.blit(text, text_rect)
-            
-            # 显示默认目录提示
-            dir_text = DEFAULT_FONT.render(f"默认目录: {default_dir}", True, BLACK)
-            dir_rect = dir_text.get_rect(center=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2 - 50))
-            screen.blit(dir_text, dir_rect)
-            
-            # 创建输入框
-            input_box = pygame.Rect(WINDOW_SIZE[0]//4, WINDOW_SIZE[1]//2, WINDOW_SIZE[0]//2, 40)
-            color_inactive = pygame.Color('lightskyblue3')
-            color_active = pygame.Color('dodgerblue2')
-            color = color_active  # 默认激活状态
-            active = True
-            text_input = ''
-            done = False
-            
-            # 显示确认按钮
-            confirm_button = pygame.Rect(WINDOW_SIZE[0]//2 - 60, WINDOW_SIZE[1]//2 + 60, 120, 40)
-            
-            # 输入循环
-            while not done:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        # 恢复屏幕并退出
-                        screen.blit(old_screen, (0, 0))
-                        pygame.display.flip()
-                        return None
-                    
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        # 检查是否点击了确认按钮
-                        if confirm_button.collidepoint(event.pos):
-                            done = True
-                    
-                    if event.type == pygame.KEYDOWN:
-                        if active:
-                            if event.key == pygame.K_RETURN:
-                                done = True
-                            elif event.key == pygame.K_BACKSPACE:
-                                text_input = text_input[:-1]
-                            elif event.key == pygame.K_ESCAPE:
-                                # 取消并返回
-                                screen.blit(old_screen, (0, 0))
-                                pygame.display.flip()
-                                return None
-                            else:
-                                # 确保正确处理Unicode字符
-                                text_input += event.unicode
-                
-                # 重新绘制屏幕
-                screen.fill(WHITE)
-                screen.blit(text, text_rect)
-                screen.blit(dir_text, dir_rect)
-                
-                # 绘制输入框
-                pygame.draw.rect(screen, color, input_box, 2)
-                # 确保文本能正确显示中文
-                try:
-                    text_surface = DEFAULT_FONT.render(text_input, True, BLACK)
-                    width = max(WINDOW_SIZE[0]//2, text_surface.get_width()+10)
-                    input_box.w = width
-                    screen.blit(text_surface, (input_box.x+5, input_box.y+5))
-                except Exception as e:
-                    print(f"渲染文本时出错: {str(e)}")
-                
-                # 绘制确认按钮
-                pygame.draw.rect(screen, BUTTON_COLOR, confirm_button)
-                confirm_text = DEFAULT_FONT.render("确认", True, WHITE)
-                confirm_rect = confirm_text.get_rect(center=confirm_button.center)
-                screen.blit(confirm_text, confirm_rect)
-                
-                pygame.display.flip()
-            
-            # 处理输入的文件路径
-            file_path = text_input.strip()
-            
-            # 如果输入为空，使用默认图片
-            if not file_path:
-                print("未选择图片")
-                # 恢复屏幕
-                screen.blit(old_screen, (0, 0))
-                pygame.display.flip()
-                return None
-            
-            # 检查文件是否存在
-            if not os.path.isfile(file_path):
-                # 显示错误信息
-                error_text = DEFAULT_FONT.render(f"文件不存在: {file_path}", True, (255, 0, 0))
-                error_rect = error_text.get_rect(center=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2 + 100))
-                screen.blit(error_text, error_rect)
-                pygame.display.flip()
-                pygame.time.wait(2000)  # 显示2秒错误信息
-                
-                # 恢复屏幕
-                screen.blit(old_screen, (0, 0))
-                pygame.display.flip()
-                return None
-            
-            print(f"选择的图片: {file_path}")
-            
-            try:
-                # 使用PIL打开并处理图片
-                pil_image = Image.open(file_path)
-                # 转换为RGB模式
-                if pil_image.mode != 'RGB':
-                    pil_image = pil_image.convert('RGB')
-                # 调整大小
-                pil_image = pil_image.resize((PIECE_SIZE * GRID_SIZE, PIECE_SIZE * GRID_SIZE))
-                
-                # 转换为Pygame surface
-                image_str = pil_image.tobytes()
-                pygame_image = pygame.image.fromstring(image_str, pil_image.size, 'RGB')
-                
-                print(f"图片加载成功，尺寸: {pygame_image.get_width()}x{pygame_image.get_height()}")
-                
-                # 恢复屏幕
-                screen.blit(old_screen, (0, 0))
-                pygame.display.flip()
-                
-                return pygame_image
-                
-            except Exception as e:
-                print(f"图片处理失败: {str(e)}")
-                traceback.print_exc()  # 打印详细错误信息
-                
-                # 显示错误信息
-                error_text = DEFAULT_FONT.render(f"图片处理失败: {str(e)}", True, (255, 0, 0))
-                error_rect = error_text.get_rect(center=(WINDOW_SIZE[0]//2, WINDOW_SIZE[1]//2 + 100))
-                screen.blit(error_text, error_rect)
-                pygame.display.flip()
-                pygame.time.wait(2000)  # 显示2秒错误信息
-                
-                # 恢复屏幕
-                screen.blit(old_screen, (0, 0))
-                pygame.display.flip()
-                return None
-            
-        except Exception as e:
-            print(f"选择图片时出错: {str(e)}")
-            traceback.print_exc()  # 打印详细错误信息
-            return None
-        finally:
-            # 不需要销毁tkinter窗口，因为我们使用的是pygame的输入方式
-            pass
-
-    def create_pieces(self, image):
-        if image is None:
-            print("没有加载到有效的图片")
-            return False
-
-        try:
-            print("开始创建拼图块...")
-            self.pieces = []
-            
-            for i in range(GRID_SIZE):
-                for j in range(GRID_SIZE):
-                    # 创建新的surface
-                    piece_surface = pygame.Surface((PIECE_SIZE, PIECE_SIZE))
-                    piece_surface.fill(WHITE)
-                    
-                    # 计算裁剪区域
-                    clip_rect = pygame.Rect(j * PIECE_SIZE, i * PIECE_SIZE, 
-                                          PIECE_SIZE, PIECE_SIZE)
-                    
-                    # 复制对应区域的图片
-                    piece_surface.blit(image, (0, 0), clip_rect)
-                    
-                    # 计算位置
-                    correct_x = MARGIN + j * PIECE_SIZE
-                    correct_y = MARGIN + i * PIECE_SIZE
-                    
-                    # 随机位置 - 考虑拼图边缘的大小
-                    random_x = random.randint(MARGIN, WINDOW_SIZE[0] - PIECE_SIZE - MARGIN - PUZZLE_EDGE_SIZE * 2)
-                    random_y = random.randint(MARGIN, WINDOW_SIZE[1] - PIECE_SIZE - MARGIN - PUZZLE_EDGE_SIZE * 2)
-                    
-                    # 创建拼图块
-                    piece = PuzzlePiece(piece_surface, random_x, random_y, 
-                                      correct_x, correct_y)
-                    self.pieces.append(piece)
-            
-            if len(self.pieces) == GRID_SIZE * GRID_SIZE:
-                self.game_started = True
-                print("游戏初始化成功！")
-                return True
-            else:
-                print(f"未能创建所有拼图块，只创建了 {len(self.pieces)} 块")
-                return False
-                
-        except Exception as e:
-            print(f"创建拼图块时出错: {str(e)}")
-            import traceback
-            traceback.print_exc()
-            return False
+                                    
+                                    # 传递连接状态 - 将other_piece的连接块也添加到piece的连接列表中
+                                    for connected_piece in other_piece.connected_pieces:
+                                        if connected_piece != piece and connected_piece not in piece.connected_pieces:
+                                            piece.connected_pieces.append(connected_piece)
+                                            connected_piece.connected_pieces.append(piece)
+                                    
+                                    # 将piece的连接块也添加到other_piece的连接列表中
+                                    for connected_piece in piece.connected_pieces:
+                                        if connected_piece != other_piece and connected_piece not in other_piece.connected_pieces:
+                                            other_piece.connected_pieces.append(connected_piece)
+                                            connected_piece.connected_pieces.append(other_piece)
+                                    break
 
     def handle_events(self):
         try:
@@ -469,6 +225,8 @@ class PuzzleGame:
                     if event.button == 1 and self.exit_button_hover:  # 左键点击退出按钮
                         pygame.quit()
                         sys.exit()
+                        return False  # 确保在退出前返回False停止游戏循环
+                        return False  # 确保在退出前返回False停止游戏循环
 
                 if not self.game_started:
                     if event.type == pygame.KEYDOWN:
@@ -519,13 +277,27 @@ class PuzzleGame:
                         if event.button == 1 and self.selected_piece:
                             self.selected_piece.dragging = False
                             self.selected_piece = None
-                    
+                            # 检查相邻拼图块
+                            self.check_adjacent_pieces()
+            
                     elif event.type == pygame.MOUSEMOTION:
                         if self.selected_piece and self.selected_piece.dragging:
+                            # 保存旧位置
+                            old_x = self.selected_piece.rect.x
+                            old_y = self.selected_piece.rect.y
+                            # 更新选中拼图块的位置
                             self.selected_piece.rect.x = event.pos[0] - PIECE_SIZE // 2
                             self.selected_piece.rect.y = event.pos[1] - PIECE_SIZE // 2
+                            # 计算位移
+                            dx = self.selected_piece.rect.x - old_x
+                            dy = self.selected_piece.rect.y - old_y
+                            # 同步移动所有连接的拼图块
+                            if self.selected_piece.connected:
+                                for piece in self.selected_piece.connected_pieces:
+                                    piece.rect.x += dx
+                                    piece.rect.y += dy
             
-            return True
+                    return True
         except Exception as e:
             print(f"事件处理出错: {str(e)}")
             import traceback

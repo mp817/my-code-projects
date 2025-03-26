@@ -1,0 +1,167 @@
+.world-map-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.map-title {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  position: relative;
+}
+
+.map-title:after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 3px;
+  background-color: #3498db;
+  margin: 0.5rem auto;
+}
+
+.world-map {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.region {
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  padding: 1rem;
+  border: 1px solid #e9ecef;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.region:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.region-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.region-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #2c3e50;
+}
+
+.region-stability {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+}
+
+.influence-bar {
+  height: 20px;
+  background-color: #ecf0f1;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+  display: flex;
+}
+
+.china-influence {
+  height: 100%;
+  background-color: #e74c3c;
+}
+
+.usa-influence {
+  height: 100%;
+  background-color: #3498db;
+}
+
+.region-resources {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+/* 特定地区的样式 */
+.east_asia {
+  border-left: 4px solid #e74c3c;
+}
+
+.europe {
+  border-left: 4px solid #3498db;
+}
+
+.middle_east {
+  border-left: 4px solid #f39c12;
+}
+
+.africa {
+  border-left: 4px solid #27ae60;
+}
+
+.south_america {
+  border-left: 4px solid #9b59b6;
+}
+
+.north_america {
+  border-left: 4px solid #2980b9;
+}
+
+.oceania {
+  border-left: 4px solid #16a085;
+}
+
+.map-legend {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+}
+
+.legend-color {
+  width: 20px;
+  height: 10px;
+  margin-right: 0.5rem;
+}
+
+.china-color {
+  background-color: #e74c3c;
+}
+
+.usa-color {
+  background-color: #3498db;
+}
+
+.global-indicators {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.indicator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.indicator-label {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.indicator-value {
+  font-weight: bold;
+  color: #3498db;
+}

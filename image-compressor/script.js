@@ -107,6 +107,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     originalImage.onerror = function() {
                         console.error('图片加载失败');
                         alert('图片加载失败，请尝试其他图片！');
+                        // 添加默认图片显示
+                        originalImage.src = 'icons/upload-icon.svg';
                     };
                     
                     originalImage.onload = function() {
@@ -179,6 +181,9 @@ document.addEventListener('DOMContentLoaded', function() {
             img.onerror = function() {
                 console.error('压缩过程中图片加载失败');
                 alert('压缩过程中图片加载失败，请重试！');
+                // 添加默认图片显示
+                compressedImage.src = 'icons/upload-icon.svg';
+                downloadButton.disabled = true;
             };
 
             img.onload = function() {
@@ -219,12 +224,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             const compressedURL = URL.createObjectURL(blob);
                             
                             // 显示压缩后的图片
-                            compressedImage.src = compressedURL;
-                            compressedImage.onerror = function() {
-                                console.error('压缩后图片显示失败');
-                                alert('压缩后图片显示失败，请重试！');
-                            };
-                            
                             compressedImage.onload = function() {
                                 try {
                                     // 显示压缩后的图片信息
@@ -242,6 +241,18 @@ document.addEventListener('DOMContentLoaded', function() {
                                     alert('更新压缩信息时出错，请重试！');
                                 }
                             };
+                            
+                            compressedImage.onerror = function() {
+                                console.error('压缩后图片显示失败');
+                                alert('压缩后图片显示失败，请重试！');
+                                // 添加默认图片显示
+                                compressedImage.src = 'icons/upload-icon.svg';
+                                downloadButton.disabled = true;
+                            };
+                            
+                            // 确保在设置src之前已经绑定了事件处理程序
+                            compressedImage.src = compressedURL;
+                            
                         } catch (error) {
                             console.error('处理压缩后图片时出错:', error);
                             alert('处理压缩后图片时出错，请重试！');
