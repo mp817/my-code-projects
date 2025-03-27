@@ -38,6 +38,8 @@ class Tetris:
         self.clock = pygame.time.Clock()
         self.background = (40, 40, 40)  # 添加背景色
         self.border_color = (100, 100, 100)  # 边界线颜色
+        self.high_score = 0  # 添加最高分变量
+        self.last_score = 0  # 添加上一局分数变量
         
         # 统一字体加载逻辑
         font_names = [
@@ -116,6 +118,12 @@ class Tetris:
 
     def reset_game(self):
         """补充缺失的重置方法"""
+        # 保存上一局分数
+        if hasattr(self, 'score'):
+            self.last_score = self.score
+        else:
+            self.last_score = 0
+            
         self.score = 0
         self.fall_speed = 1000
         self.last_fall_time = 0
@@ -202,6 +210,7 @@ class Tetris:
                 # 绘制游戏元素
                 self.draw_grid()
                 self.draw_piece(self.current_piece)
+                self.draw_next_piece()
             
             # 游戏结束画面
             if self.game_over:
@@ -335,16 +344,64 @@ class Tetris:
                                 piece['color'])
 
     def draw_score(self):
-        """确保使用self.font渲染文本"""
-        score_text = self.font.render(f'分数: {self.score}', True, (255, 255, 255))
+        """显示当前分数、上一局分数和最高分"""
+        # 更新最高分
+        if self.score > self.high_score:
+            self.high_score = self.score
+            
+        # 当前分数
+        score_text = self.font.render(f'当前分数: {self.score}', True, (255, 255, 255))
         self.screen.blit(score_text, (50, 50))
+        
+        # 上一局分数
+        last_score_text = self.font.render(f'上一局分数: {self.last_score}', True, (255, 255, 255))
+        self.screen.blit(last_score_text, (50, 100))
+        
+        # 最高分
+        high_score_text = self.font.render(f'最高分: {self.high_score}', True, (255, 255, 255))
+        self.screen.blit(high_score_text, (50, 150))
+        
+    def draw_next_piece(self):
+        """绘制下一个方块预览"""
+        # 预览区域位置和大小
+        preview_left = WIDTH - 200
+        preview_top = 100
+        preview_width = 150
+        preview_height = 150
+        
+        # 绘制预览区域边框
+        preview_rect = pygame.Rect(preview_left, preview_top, preview_width, preview_height)
+        pygame.draw.rect(self.screen, self.border_color, preview_rect, 2)
+        
+        # 绘制标题
+        title_text = self.font.render("下一个方块", True, (255, 255, 255))
+        title_rect = title_text.get_rect(center=(preview_left + preview_width // 2, preview_top - 20))
+        self.screen.blit(title_text, title_rect)
+        
+        # 计算方块在预览区域中的位置
+        block_size = min(preview_width, preview_height) // 5
+        shape_width = len(self.next_piece['shape'][0]) * block_size
+        shape_height = len(self.next_piece['shape']) * block_size
+        
+        # 居中显示方块
+        start_x = preview_left + (preview_width - shape_width) // 2
+        start_y = preview_top + (preview_height - shape_height) // 2
+        
+        # 绘制下一个方块
+        for y, row in enumerate(self.next_piece['shape']):
+            for x, cell in enumerate(row):
+                if cell:
+                    draw_3d_block(self.screen,
+                                start_x + x * block_size,
+                                start_y + y * block_size,
+                                self.next_piece['color'])
 
     def draw_button(self):
         """绘制开始按钮"""
         button_text = "开始游戏" if self.game_over else "游戏中"
         button_color = (100, 255, 100) if self.game_over else (200, 200, 200)
         
-        button_rect = pygame.Rect(50, 100, 200, 50)
+        button_rect = pygame.Rect(50, 200, 200, 50)
         pygame.draw.rect(self.screen, button_color, button_rect)
         pygame.draw.rect(self.screen, (255, 255, 255), button_rect, 2)
         
@@ -368,8 +425,15 @@ class Tetris:
         score_rect = score_text.get_rect(center=(WIDTH//2, HEIGHT//2 + 20))
         self.screen.blit(score_text, score_rect)
         
+        # 显示最高分
+        if self.score > self.high_score:
+            self.high_score = self.score
+        high_score_text = self.small_font.render(f"最高分: {self.high_score}", True, (255, 255, 255))
+        high_score_rect = high_score_text.get_rect(center=(WIDTH//2, HEIGHT//2 + 60))
+        self.screen.blit(high_score_text, high_score_rect)
+        
         restart_text = self.small_font.render("点击任意位置重新开始", True, (255, 255, 255))
-        restart_rect = restart_text.get_rect(center=(WIDTH//2, HEIGHT//2 + 80))
+        restart_rect = restart_text.get_rect(center=(WIDTH//2, HEIGHT//2 + 100))
         self.screen.blit(restart_text, restart_rect)
 
 if __name__ == "__main__":
