@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Tetris</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-info">
+            <div class="score-container">
+                <h2>SCORE</h2>
+                <div id="score">0</div>
+            </div>
+            <div class="level-container">
+                <h2>LEVEL</h2>
+                <div id="level">1</div>
+            </div>
+            <div class="lines-container">
+                <h2>LINES</h2>
+                <div id="lines">0</div>
+            </div>
+            <div class="next-piece-container">
+                <h2>NEXT</h2>
+                <div id="next-piece"></div>
+            </div>
+            <div class="controls-info">
+                <h2>CONTROLS</h2>
+                <p>← → : Move</p>
+                <p>↑ : Rotate</p>
+                <p>↓ : Soft Drop</p>
+                <p>Space : Hard Drop</p>
+                <p>P : Pause</p>
+            </div>
+            <button id="start-button">START / PAUSE</button>
+            <button id="reset-button">RESET</button>
+        </div>
+        <div class="game-board-container">
+            <canvas id="game-board"></canvas>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
